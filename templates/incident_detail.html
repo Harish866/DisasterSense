@@ -1,0 +1,318 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Incident Review | Response Intelligence System</title>
+
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+
+<body>
+
+<div class="detail-page">
+
+    <header class="detail-header">
+        <div>
+            <div class="detail-eyebrow">RESPONSE INTELLIGENCE SYSTEM</div>
+            <h1>Incident Review</h1>
+            <p>Incident #{{ incident.id }} · {{ incident.created_at|date:"d M Y, H:i" }}</p>
+        </div>
+
+        <a href="{% url 'dashboard' %}" class="detail-back">
+            ← Back to Dashboard
+        </a>
+    </header>
+
+    {% if messages %}
+        <div class="detail-messages">
+            {% for message in messages %}
+                <div class="detail-message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="detail-panel">
+
+        <div class="detail-section-heading">
+            <span>01 / REPORTED INCIDENT</span>
+            <span class="detail-status">{{ incident.get_status_display }}</span>
+        </div>
+
+        <h2>{{ incident.title }}</h2>
+
+        <p class="detail-description">
+            {{ incident.description }}
+        </p>
+
+        <div class="detail-info-grid">
+
+            <div>
+                <span>LOCATION</span>
+                <strong>{{ incident.location }}</strong>
+            </div>
+
+            <div>
+                <span>LATITUDE</span>
+                <strong>{{ incident.latitude|default:"Not provided" }}</strong>
+            </div>
+
+            <div>
+                <span>LONGITUDE</span>
+                <strong>{{ incident.longitude|default:"Not provided" }}</strong>
+            </div>
+
+            <div>
+                <span>REPORTED SEVERITY</span>
+                <strong>{{ incident.severity }} / 5</strong>
+            </div>
+
+            <div>
+                <span>PEOPLE AFFECTED</span>
+                <strong>{{ incident.people_affected }}</strong>
+            </div>
+
+            <div>
+                <span>REPORTED CATEGORY</span>
+                <strong>{{ incident.get_incident_type_display }}</strong>
+            </div>
+
+        </div>
+    </section>
+
+
+    <section class="detail-panel">
+
+        <div class="detail-section-heading">
+            <span>02 / AI INCIDENT ANALYSIS</span>
+            <span class="detail-advisory">ADVISORY ONLY</span>
+        </div>
+
+        <div class="detail-analysis-grid">
+
+            <div class="detail-analysis-card">
+                <span>AI PREDICTED CATEGORY</span>
+                <strong>
+                    {{ incident.ai_predicted_type|default:"Not available" }}
+                </strong>
+            </div>
+
+            <div class="detail-analysis-card">
+                <span>MODEL SCORE</span>
+                <strong>
+                    {% if ai_score_percent != None %}
+                        {{ ai_score_percent }}%
+                    {% else %}
+                        Not available
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detail-analysis-card">
+                <span>RECOMMENDED PRIORITY</span>
+                <strong>
+                    {{ incident.get_suggested_priority_display }}
+                </strong>
+            </div>
+
+            <div class="detail-analysis-card">
+                <span>PRIORITY SCORE</span>
+                <strong>{{ incident.priority_score }}/100</strong>
+            </div>
+
+        </div>
+
+        <div class="detail-explanation">
+            <h3>Classification explanation</h3>
+            <p>
+                {{ incident.ai_explanation|default:"No classification explanation available." }}
+            </p>
+
+            <h3>Priority assessment</h3>
+            <p>
+                {{ incident.priority_explanation|default:"No priority assessment available." }}
+            </p>
+        </div>
+
+    </section>
+
+
+    <section class="detail-panel">
+
+        <div class="detail-section-heading">
+            <span>03 / EXTRACTED FIELD INTELLIGENCE</span>
+            <span class="detail-advisory">AUTOMATED EXTRACTION</span>
+        </div>
+
+        <div class="detail-intelligence-grid">
+
+            <div class="detail-intelligence-card">
+                <span>PEOPLE TRAPPED</span>
+                <strong>
+                    {% if incident.people_trapped == True %}
+                        YES
+                    {% elif incident.people_trapped == False %}
+                        NO
+                    {% else %}
+                        UNKNOWN
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detail-intelligence-card">
+                <span>INJURIES REPORTED</span>
+                <strong>
+                    {% if incident.injuries_reported == True %}
+                        YES
+                    {% elif incident.injuries_reported == False %}
+                        NO
+                    {% else %}
+                        UNKNOWN
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detail-intelligence-card">
+                <span>INJURED COUNT</span>
+                <strong>
+                    {% if incident.injured_count != None %}
+                        {{ incident.injured_count }}
+                    {% else %}
+                        UNKNOWN
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detail-intelligence-card">
+                <span>RESCUE REQUIRED</span>
+                <strong>
+                    {% if incident.rescue_required == True %}
+                        YES
+                    {% elif incident.rescue_required == False %}
+                        NO
+                    {% else %}
+                        UNKNOWN
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detail-intelligence-card">
+                <span>EVACUATION REQUIRED</span>
+                <strong>
+                    {% if incident.evacuation_required == True %}
+                        YES
+                    {% elif incident.evacuation_required == False %}
+                        NO
+                    {% else %}
+                        UNKNOWN
+                    {% endif %}
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="detail-explanation">
+            <h3>Extraction summary</h3>
+            <p class="detail-summary">
+                {{ incident.intelligence_summary|default:"No intelligence has been extracted." }}
+            </p>
+        </div>
+
+    </section>
+
+
+    <section class="detail-panel review-panel">
+
+        <div class="detail-section-heading">
+            <span>04 / COORDINATOR REVIEW</span>
+            <span class="detail-human">HUMAN CONTROL</span>
+        </div>
+
+        <p class="review-description">
+            Review the original report and AI findings before confirming
+            the operational category, priority and incident status.
+            Your selections will become the operational record.
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="review-form-grid">
+
+                <div class="review-field">
+                    <label for="incident_type">CONFIRMED INCIDENT CATEGORY</label>
+
+                    <select name="incident_type" id="incident_type" required>
+                        {% for value, label in incident_types %}
+                            <option value="{{ value }}"
+                                {% if incident.incident_type == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="review-field">
+                    <label for="priority">OPERATIONAL PRIORITY</label>
+
+                    <select name="priority" id="priority" required>
+                        {% if incident.priority == 'UNASSESSED' %}
+                            <option value="" selected disabled>
+                                Awaiting coordinator assessment — select a priority
+                            </option>
+                        {% endif %}
+
+                        {% for value, label in priority_levels %}
+                            <option value="{{ value }}"
+                                {% if incident.priority == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="review-field">
+                    <label for="status">INCIDENT STATUS</label>
+
+                    <select name="status" id="status" required>
+                        {% for value, label in status_choices %}
+                            <option value="{{ value }}"
+                                {% if incident.status == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="review-actions">
+                <button type="submit" class="review-save">
+                    Save Coordinator Review
+                </button>
+
+                <a href="{% url 'dashboard' %}" class="review-cancel">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </section>
+
+    <footer class="detail-footer">
+        AI outputs are experimental decision-support results.
+        They are not validated emergency-response instructions.
+        Final operational decisions remain with authorised personnel.
+    </footer>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+
+description,incident_type
+"Heavy rainfall caused severe flooding in residential streets",FLOOD
+"Water has entered several houses after continuous rainfall",FLOOD
+"Rising river water threatens nearby villages and homes",FLOOD
+"Residents are stranded due to flooded roads",FLOOD
+"Flood water is entering the ground floors of buildings",FLOOD
+"Several people are trapped by rapidly rising flood water",FLOOD
+"Overflowing drainage has caused waterlogging in the neighbourhood",FLOOD
+"People need evacuation due to severe flooding near the river",FLOOD
+"Heavy rain has submerged roads and damaged houses",FLOOD
+"Flood water has surrounded a residential apartment complex",FLOOD
+"A large fire broke out inside a commercial building",FIRE
+"Smoke is spreading from a burning residential house",FIRE
+"Electrical short circuit caused a fire in the factory",FIRE
+"Flames are spreading across a warehouse",FIRE
+"Forest fire is approaching nearby residential areas",FIRE
+"Several shops caught fire in the market area",FIRE
+"Thick smoke is coming from a building and residents are evacuating",FIRE
+"Fire engulfed a vehicle parked near the building",FIRE
+"Gas leakage triggered an explosion and fire",FIRE
+"Firefighters are needed to control a major building fire",FIRE
+"A person collapsed and requires immediate medical assistance",MEDICAL
+"An injured person needs an emergency ambulance",MEDICAL
+"Several people are suffering from severe dehydration",MEDICAL
+"Patients need urgent medical attention after the disaster",MEDICAL
+"A person is experiencing difficulty breathing",MEDICAL
+"An elderly resident requires immediate medical assistance",MEDICAL
+"Multiple people are injured and need hospital transportation",MEDICAL
+"A child has suffered serious injuries and needs an ambulance",MEDICAL
+"Medical teams are required at the emergency shelter",MEDICAL
+"A person has lost consciousness and needs urgent treatment",MEDICAL
+"A strong earthquake caused buildings to collapse",EARTHQUAKE
+"Residents reported strong ground shaking in the city",EARTHQUAKE
+"Several houses developed cracks after an earthquake",EARTHQUAKE
+"People are trapped under debris following an earthquake",EARTHQUAKE
+"Earthquake damaged roads and residential structures",EARTHQUAKE
+"Aftershocks are causing panic among residents",EARTHQUAKE
+"A school building collapsed following ground shaking",EARTHQUAKE
+"Emergency rescue teams are needed after the earthquake",EARTHQUAKE
+"Multiple structures have been damaged by seismic activity",EARTHQUAKE
+"People have been evacuated after a major earthquake",EARTHQUAKE
+"A collision between two cars caused injuries",ACCIDENT
+"A bus overturned on the highway",ACCIDENT
+"Multiple vehicles were involved in a road accident",ACCIDENT
+"A truck crashed into a roadside building",ACCIDENT
+"A motorcycle accident left a person seriously injured",ACCIDENT
+"A vehicle collided with a pedestrian near the junction",ACCIDENT
+"A highway accident has blocked traffic",ACCIDENT
+"Several passengers were injured when a bus crashed",ACCIDENT
+"A tanker overturned on the main road",ACCIDENT
+"Emergency assistance is needed after a major vehicle collision",ACCIDENT

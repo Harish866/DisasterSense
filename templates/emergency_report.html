@@ -1,0 +1,222 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Emergency Report | Disaster Response Intelligence</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <header class="topbar">
+        <div class="brand">
+            <a href="{% url 'dashboard' %}" class="dashboard-link">
+    ← Back to Command Dashboard
+</a>
+            <div class="brand-icon">✚</div>
+            <div>
+                <h2>RESPONSE<span>INTELLIGENCE</span></h2>
+                <small>EMERGENCY OPERATIONS SYSTEM</small>
+            </div>
+        </div>
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            SYSTEM OPERATIONAL
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <div class="page-heading">
+            <div>
+                <p class="eyebrow">INCIDENT MANAGEMENT / REPORT INTAKE</p>
+                <h1>Emergency Report</h1>
+                <p class="subtitle">
+                    Submit an emergency incident for assessment
+                    and response coordination.
+                </p>
+            </div>
+
+            <div class="reference-card">
+                <span>REPORTING MODULE</span>
+                <strong>ER / 001</strong>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" class="incident-form">
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <section class="form-section">
+
+                <div class="section-heading">
+                    <span class="section-number">01</span>
+                    <div>
+                        <h3>Incident Information</h3>
+                        <p>Describe the emergency situation.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+                        <label for="{{ form.title.id_for_label }}">
+                            Incident Title *
+                        </label>
+                        {{ form.title }}
+                        {{ form.title.errors }}
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="{{ form.description.id_for_label }}">
+                            Incident Description *
+                        </label>
+                        {{ form.description }}
+                        {{ form.description.errors }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.incident_type.id_for_label }}">
+                            Incident Category *
+                        </label>
+                        {{ form.incident_type }}
+                        {{ form.incident_type.errors }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.severity.id_for_label }}">
+                            Reported Severity *
+                        </label>
+                        {{ form.severity }}
+                        {{ form.severity.errors }}
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="form-section">
+
+                <div class="section-heading">
+                    <span class="section-number">02</span>
+                    <div>
+                        <h3>Location Information</h3>
+                        <p>Identify where the emergency occurred.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+                        <label for="{{ form.location.id_for_label }}">
+                            Incident Location *
+                        </label>
+                        {{ form.location }}
+                        {{ form.location.errors }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.latitude.id_for_label }}">
+                            Latitude
+                        </label>
+                        {{ form.latitude }}
+                        {{ form.latitude.errors }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.longitude.id_for_label }}">
+                            Longitude
+                        </label>
+                        {{ form.longitude }}
+                        {{ form.longitude.errors }}
+                    </div>
+
+                </div>
+
+                <p class="field-hint">
+                    Geographic coordinates are optional for now.
+                    We will integrate map-based location selection later.
+                </p>
+
+            </section>
+
+            <section class="form-section">
+
+                <div class="section-heading">
+                    <span class="section-number">03</span>
+                    <div>
+                        <h3>Impact Assessment</h3>
+                        <p>Estimate the scale of the emergency.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="{{ form.people_affected.id_for_label }}">
+                            Estimated People Affected
+                        </label>
+                        {{ form.people_affected }}
+                        {{ form.people_affected.errors }}
+                    </div>
+
+                </div>
+
+                <div class="notice">
+                    <span>ⓘ</span>
+                    <p>
+                        Severity is initially reported by the submitter.
+                        The emergency coordinator must verify the
+                        assessment before operational decisions.
+                    </p>
+                </div>
+
+            </section>
+
+            <div class="form-footer">
+                <p>Fields marked * are required.</p>
+
+                <button type="reset" class="reset-button">
+                    Clear Form
+                </button>
+
+                <button type="submit" class="submit-button">
+                    <span>Submit Emergency Report</span>
+                    <span>→</span>
+                </button>
+            </div>
+
+        </form>
+
+        <footer>
+            DISASTER RESPONSE INTELLIGENCE & COORDINATION SYSTEM
+            <span>DEMONSTRATION ENVIRONMENT</span>
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

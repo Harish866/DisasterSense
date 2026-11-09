@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | Disaster Intelligence & Coordination Centre</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/command_center.css' %}">
+</head>
+<body>
+<div class="app-shell">
+    <header class="topbar">
+        <a class="brand" href="{% url 'dashboard' %}">
+            <span class="brand-pulse"></span>
+            <span><strong>DisasterSense</strong><small>// INTELLIGENCE & COORDINATION CENTRE</small></span>
+        </a>
+        <div class="topbar-status"><span class="status-divider"></span> PROTOTYPE ENVIRONMENT <span class="status-divider"></span> AI OUTPUTS: ADVISORY</div>
+        <div class="top-metrics">
+            <div><small>TOTAL</small><strong>{{ total_incidents|stringformat:"02d" }}</strong></div>
+            <div><small>ACTIVE</small><strong class="cyan">{{ active_incidents|stringformat:"02d" }}</strong></div>
+            <div><small>CRITICAL</small><strong class="red">{{ critical_incidents|stringformat:"02d" }}</strong></div>
+        </div>
+        <a class="new-report" href="{% url 'submit_incident' %}">＋ NEW INCIDENT</a>
+    </header>
+
+    <aside class="sidebar">
+        <div class="rail-label">NAVIGATION</div>
+        <a class="nav-item active" href="{% url 'dashboard' %}"><span>◈</span> Incident Dashboard</a>
+        <a class="nav-item" href="{% url 'submit_incident' %}"><span>＋</span> Emergency Report Intake</a>
+        <a class="nav-item" href="#incident-queue"><span>▤</span> Incident Queue</a>
+        <div class="sidebar-bottom">
+            <div class="rail-label">IMPLEMENTATION</div>
+            <div class="scope-line"><span>DATA STORE</span><b>SQLite</b></div>
+            <div class="scope-line"><span>CLASSIFIER</span><b>Scikit-learn</b></div>
+            <p>Prototype only. No live emergency-service, dispatch, sensor, or field-unit integration.</p>
+        </div>
+    </aside>
+
+    <main class="workspace">
+        <section class="overview-strip">
+            <div><span class="eyebrow">DISASTER RESPONSE PROTOTYPE</span><h1>Situational Awareness</h1><p>Incident monitoring, AI-assisted analysis and coordinator review</p></div>
+            <div class="overview-badges"><span class="badge neutral">{{ incident_list|length }} RECORDS SHOWN</span><span class="badge green">COORDINATOR REVIEW WORKFLOW</span></div>
+        </section>
+
+        {% if messages %}
+        <section class="message-stack">
+            {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+        </section>
+        {% endif %}
+
+        <section class="stat-grid">
+            <article class="stat-card"><span class="stat-label">TOTAL INCIDENTS</span><strong>{{ total_incidents }}</strong><small>All submitted reports</small></article>
+            <article class="stat-card"><span class="stat-label">ACTIVE INCIDENTS</span><strong class="cyan">{{ active_incidents }}</strong><small>Not marked resolved</small></article>
+            <article class="stat-card"><span class="stat-label">CRITICAL PRIORITY</span><strong class="red">{{ critical_incidents }}</strong><small>Coordinator-assigned priority</small></article>
+            <article class="stat-card"><span class="stat-label">RESOLVED</span><strong class="green">{{ resolved_incidents }}</strong><small>Closed incident records</small></article>
+        </section>
+
+        <section class="console-grid">
+            <div class="left-column">
+                <section class="panel intake-panel" id="incident-queue">
+                    <div class="panel-heading"><div><span class="eyebrow">SUBMITTED REPORTS</span><h2>Incident Queue</h2></div><span class="count-chip">{{ incident_list|length }} VISIBLE</span></div>
+                    <form method="GET" class="filters" action="{% url 'dashboard' %}">
+                        <input type="search" name="search" value="{{ search_query }}" placeholder="Search report, description, location…">
+                        <select name="type"><option value="">All categories</option>{% for value,label in incident_types %}<option value="{{ value }}" {% if selected_type == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+                        <select name="priority"><option value="">All priorities</option>{% for value,label in priority_levels %}<option value="{{ value }}" {% if selected_priority == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+                        <select name="status"><option value="">All statuses</option>{% for value,label in status_choices %}<option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+                        <div class="filter-actions"><button type="submit">FILTER</button><a href="{% url 'dashboard' %}">RESET</a></div>
+                    </form>
+                    <div class="queue-list">
+                        {% for incident in incident_list %}
+                        <a class="queue-card {% if incident.priority == 'CRITICAL' %}queue-critical{% elif incident.priority == 'HIGH' %}queue-high{% endif %}" href="{% url 'incident_detail' incident.id %}">
+                            <div class="queue-top"><span class="incident-number">#INC-{{ incident.id }}</span><span class="priority-tag {{ incident.priority|lower }}">{{ incident.get_priority_display }}</span></div>
+                            <h3>{{ incident.title }}</h3>
+                            <p>{{ incident.description|truncatechars:135 }}</p>
+                            <div class="queue-meta"><span>{{ incident.location|default:'Location not supplied' }}</span><time>{{ incident.created_at|date:'d M, H:i' }}</time></div>
+                            <div class="queue-bottom"><span>{{ incident.get_incident_type_display }}</span><span class="status-tag {{ incident.status|lower }}">{{ incident.get_status_display }}</span></div>
+                            <div class="queue-ai">AI: {% if incident.ai_predicted_type %}{{ incident.ai_predicted_type }}{% else %}Not assessed{% endif %} <i>·</i> Suggested priority: {% if incident.suggested_priority %}{{ incident.suggested_priority }}{% else %}Unavailable{% endif %}</div>
+                        </a>
+                        {% empty %}<div class="empty-state">No incident records match these filters.</div>{% endfor %}
+                    </div>
+                </section>
+            </div>
+
+            <div class="centre-column">
+                <section class="panel category-panel">
+                    <div class="panel-heading"><div><span class="eyebrow">DATABASE SUMMARY</span><h2>Incident Category Breakdown</h2></div></div>
+                    <div class="category-bars">
+                        {% for category in category_counts %}
+                        <div class="category-row"><span>{{ category.incident_type }}</span><div class="bar-track"><i style="width:{% widthratio category.total total_incidents 100 %}%"></i></div><b>{{ category.total }}</b></div>
+                        {% empty %}<p class="empty-state">No category data available.</p>{% endfor %}
+                    </div>
+                </section>
+                <section class="panel distribution-panel">
+                    <div class="panel-heading"><div><span class="eyebrow">DATABASE STATUS FIELDS</span><h2>Coordinator Status</h2></div></div>
+                    <div class="intel-row"><span>Awaiting coordinator assessment</span><b>{{ unassessed_incidents }}</b></div>
+                    <div class="intel-row"><span>Under coordinator review</span><b>{{ under_review_incidents }}</b></div>
+                    <div class="intel-row"><span>Resolved</span><b>{{ resolved_incidents }}</b></div>
+                </section>
+            </div>
+
+            <aside class="right-column">
+                <section class="panel analysis-panel">
+                    <div class="panel-heading"><div><span class="eyebrow">EXPERIMENTAL AI ANALYSIS</span><h2>Latest Analysis</h2></div><span class="advisory-chip">ADVISORY</span></div>
+                    {% if latest_incident %}
+                    <div class="focus-incident"><small>FOCUS INCIDENT · #INC-{{ latest_incident.id }}</small><h3>{{ latest_incident.title }}</h3><p>{{ latest_incident.location|default:'Location not supplied' }}</p></div>
+                    <div class="analysis-block"><label>AI PREDICTED CATEGORY</label><strong>{{ latest_incident.ai_predicted_type|default:'Not available' }}</strong>{% if latest_incident.ai_score_percent != None %}<small>Model score: {{ latest_incident.ai_score_percent }}%</small>{% endif %}</div>
+                    <div class="analysis-block"><label>AI-RECOMMENDED PRIORITY</label><strong class="priority-text {{ latest_incident.suggested_priority|lower }}">{{ latest_incident.suggested_priority|default:'Not assessed' }}</strong>{% if latest_incident.priority_score != None %}<div class="score-line"><span>Rule-based score</span><b>{{ latest_incident.priority_score }}/100</b></div><div class="score-track"><i style="width:{{ latest_incident.priority_score }}%"></i></div>{% endif %}<p>{{ latest_incident.priority_explanation|default:'No priority explanation is available.'|truncatechars:260 }}</p></div>
+                    <div class="analysis-block"><label>EXTRACTED FIELD INTELLIGENCE</label><div class="intel-row"><span>People trapped</span><b>{% if latest_incident.people_trapped == True %}YES{% elif latest_incident.people_trapped == False %}NO{% else %}UNKNOWN{% endif %}</b></div><div class="intel-row"><span>Injuries reported</span><b>{% if latest_incident.injuries_reported == True %}YES{% elif latest_incident.injuries_reported == False %}NO{% else %}UNKNOWN{% endif %}</b></div><div class="intel-row"><span>Injured count</span><b>{% if latest_incident.injured_count != None %}{{ latest_incident.injured_count }}{% else %}Unknown{% endif %}</b></div><div class="intel-row"><span>Rescue required</span><b>{% if latest_incident.rescue_required == True %}YES{% elif latest_incident.rescue_required == False %}NO{% else %}UNKNOWN{% endif %}</b></div><div class="intel-row"><span>Evacuation required</span><b>{% if latest_incident.evacuation_required == True %}YES{% elif latest_incident.evacuation_required == False %}NO{% else %}UNKNOWN{% endif %}</b></div></div>
+                    <a class="review-button" href="{% url 'incident_detail' latest_incident.id %}">OPEN COORDINATOR REVIEW ↗</a>
+                    {% else %}<div class="empty-state">No incident has been submitted yet.</div>{% endif %}
+                    <p class="safety-note">AI outputs are experimental decision-support results. Verify the original report before taking action.</p>
+                </section>
+            </aside>
+        </section>
+        <footer class="footer-note"><span>DISASTER RESPONSE INTELLIGENCE PROTOTYPE</span><span>AI outputs are advisory · No field dispatch or emergency-service connection</span></footer>
+    </main>
+</div>
+
+</body>
+</html>
