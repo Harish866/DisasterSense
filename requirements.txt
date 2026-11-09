@@ -12,3 +12,6 @@ sqlparse==0.6.1
 threadpoolctl==3.8.0
 tzdata==2026.6
 gunicorn
+whitenoise
+dj-database-url
+psycopg2-binary
